@@ -39,34 +39,34 @@ const ViewTaskPage: React.FC = () => {
     return <p className="container">Task not found.</p>;
   }
 
-  return (
-    <div className="container">
-      <header>
-        <h1>Task Details</h1>
-        <button onClick={() => navigate('/')} className="btn btn-outline">Back to List</button>
-      </header>
+return (
+  <div className="container">
+    <header>
+      <h1>Task Details</h1>
+      <button onClick={() => navigate('/')} className="btn btn-outline">Back to List</button>
+    </header>
 
-      <div className="task-detail-card">
-        <div className="task-header">
-          <span className={`status-badge ${task.status}`}>
-            {task.status}
-          </span>
-          <h2>{task.name}</h2>
+    <div className="task-view-content">
+      <div className="task-header">
+        <span className={`status-badge ${task.status}`}>
+          {task.status}
+        </span>
+        <h2>{task.name}</h2>
+      </div>
+
+      {task.description && (
+        <div className="task-description-section">
+          <h3>Description</h3>
+          <p>{task.description}</p>
         </div>
+      )}
 
-        {task.description && (
-          <div className="task-description-section">
-            <h3>Description</h3>
-            <p>{task.description}</p>
-          </div>
-        )}
-
-        <div className="task-footer">
-          <button onClick={() => navigate('/')} className="btn btn-outline">Close</button>
-        </div>
+      <div className="task-footer">
+        <button onClick={() => navigate('/')} className="btn btn-outline">Close</button>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default ViewTaskPage;

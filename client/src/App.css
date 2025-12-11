@@ -15,6 +15,10 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 24px 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 header {
@@ -76,6 +80,7 @@ header h1 {
   padding: 16px;
   margin-bottom: 14px;
   background: white;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   transition: all 0.2s ease;
@@ -127,6 +132,10 @@ header h1 {
   flex-direction: column;
   gap: 8px;
   width: 100%;
+}
+
+.task-view-content {
+  padding-top: 16px;
 }
 
 .edit-form input,
