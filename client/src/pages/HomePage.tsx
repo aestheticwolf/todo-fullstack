@@ -180,7 +180,8 @@ const TaskItem: React.FC<{
             value={editDescription}
             onChange={e => setEditDescription(e.target.value)}
             placeholder="Task description"
-            rows={3}
+            className="edit-description-input"
+            rows={4}
           />
           <button onClick={saveEdit} className="btn btn-small">Update</button>
           <button onClick={onEditCancel} className="btn btn-small btn-outline">Cancel</button>
