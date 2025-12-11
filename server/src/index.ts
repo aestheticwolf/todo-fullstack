@@ -4,10 +4,23 @@ import cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://animated-blini-ed1a37.netlify.app' 
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
+
 app.use(express.json());
 
-// this Inmemory task storage
 let tasks: { id: number; name: string; status: 'Complete' | 'Incomplete'; description: string }[] = [
   { 
     id: 1, 
@@ -17,12 +30,12 @@ let tasks: { id: number; name: string; status: 'Complete' | 'Incomplete'; descri
   }
 ];
 
-//GET /api/tasks
+// GET /api/tasks
 app.get('/api/tasks', (req, res) => {
   res.json(tasks);
 });
 
-//POST /api/tasks
+// POST /api/tasks
 app.post('/api/tasks', (req, res) => {
   const { name, status, description } = req.body;
 
@@ -46,7 +59,7 @@ app.post('/api/tasks', (req, res) => {
   res.status(201).json(newTask);
 });
 
-//PUT /api/tasks/:id
+// PUT /api/tasks/:id
 app.put('/api/tasks/:id', (req, res) => {
   const id = parseInt(req.params.id, 10);
   const { name, status, description } = req.body;
@@ -73,7 +86,7 @@ app.put('/api/tasks/:id', (req, res) => {
   res.json(tasks[taskIndex]);
 });
 
-//DELETE /api/tasks/:id
+// DELETE /api/tasks/:id
 app.delete('/api/tasks/:id', (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id)) {

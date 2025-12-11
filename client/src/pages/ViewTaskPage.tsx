@@ -1,4 +1,3 @@
-// client/src/pages/ViewTaskPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Task } from '../types';

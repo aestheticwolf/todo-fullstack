@@ -1,4 +1,3 @@
-// client/src/pages/HomePage.tsx
 import React, { useState, useEffect } from 'react';
 import { Task } from '../types';
 import { fetchTasks, updateTask, deleteTask } from '../api';
