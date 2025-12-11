@@ -4,6 +4,7 @@ import { createTask } from '../api';
 
 const AddTaskPage: React.FC = () => {
   const [name, setName] = useState('');
+  const [description, setDescription] = useState(''); 
   const [status, setStatus] = useState<'Complete' | 'Incomplete'>('Incomplete');
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const AddTaskPage: React.FC = () => {
 
     setSubmitting(true);
     try {
-      await createTask(name.trim(), status);
+      await createTask(name.trim(), status, description.trim()); //DESCRIPTION
       navigate('/');
     } catch (err) {
       alert('Failed to add task. Please try again.');
@@ -39,6 +40,17 @@ const AddTaskPage: React.FC = () => {
             required
           />
         </div>
+    
+<div className="form-group">
+  <label>Description</label>
+  <input
+    type="text"
+    value={description}
+    onChange={e => setDescription(e.target.value)}
+    placeholder="Briefly describe the task"
+    className="form-input description-input"
+  />
+</div>
         <div className="form-group">
           <label>Status</label>
           <select value={status} onChange={e => setStatus(e.target.value as any)}>

@@ -1,3 +1,4 @@
+// client/src/pages/HomePage.tsx
 import React, { useState, useEffect } from 'react';
 import { Task } from '../types';
 import { fetchTasks, updateTask, deleteTask } from '../api';
@@ -9,6 +10,7 @@ const HomePage: React.FC = () => {
   const [filter, setFilter] = useState<'All' | 'Complete' | 'Incomplete'>('All');
   const [sortBy, setSortBy] = useState<'name' | 'status'>('name');
   const [search, setSearch] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null); // ← NEW STATE
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -30,7 +32,7 @@ const HomePage: React.FC = () => {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
     try {
-      const updated = await updateTask(id, task.name, newStatus);
+      const updated = await updateTask(id, task.name, newStatus, task.description);
       setTasks(tasks.map(t => (t.id === id ? updated : t)));
     } catch (err) {
       alert('Failed to update status');
@@ -47,18 +49,27 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const handleEdit = async (id: number, newName: string) => {
+  const handleEditStart = (id: number) => {
+    setEditingId(id); //SHows which task is being edited
+  };
+
+  const handleEditCancel = () => {
+    setEditingId(null); // thisexit edit mode
+  };
+
+  const handleEditSubmit = async (id: number, newName: string, newDescription: string) => {
     const task = tasks.find(t => t.id === id);
     if (!task || !newName.trim()) return;
     try {
-      const updated = await updateTask(id, newName.trim(), task.status);
+      const updated = await updateTask(id, newName.trim(), task.status, newDescription.trim());
       setTasks(tasks.map(t => (t.id === id ? updated : t)));
+      setEditingId(null); // this exitedit mode after save
     } catch (err) {
       alert('Failed to update task');
     }
   };
 
-  // Apply filter, search, sort
+  // here apply filter, search, sort
   let filteredTasks = [...tasks];
   if (filter !== 'All') {
     filteredTasks = filteredTasks.filter(t => t.status === filter);
@@ -122,7 +133,10 @@ const HomePage: React.FC = () => {
                 task={task}
                 onToggle={toggleStatus}
                 onDelete={handleDelete}
-                onEdit={handleEdit}
+                onEditStart={handleEditStart}
+                onEditCancel={handleEditCancel}
+                onEditSubmit={handleEditSubmit}
+                isEditing={editingId === task.id} //this shows whether this task is being edited
               />
             ))
           )}
@@ -137,16 +151,18 @@ const TaskItem: React.FC<{
   task: Task;
   onToggle: (id: number, status: 'Complete' | 'Incomplete') => void;
   onDelete: (id: number) => void;
-  onEdit: (id: number, name: string) => void;
-}> = ({ task, onToggle, onDelete, onEdit }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  onEditStart: (id: number) => void;
+  onEditCancel: () => void;
+  onEditSubmit: (id: number, name: string, description: string) => void;
+  isEditing: boolean;
+}> = ({ task, onToggle, onDelete, onEditStart, onEditCancel, onEditSubmit, isEditing }) => {
   const [editName, setEditName] = useState(task.name);
+  const [editDescription, setEditDescription] = useState(task.description);
 
   const saveEdit = () => {
     if (editName.trim()) {
-      onEdit(task.id, editName);
+      onEditSubmit(task.id, editName, editDescription);
     }
-    setIsEditing(false);
   };
 
   return (
@@ -157,21 +173,38 @@ const TaskItem: React.FC<{
             type="text"
             value={editName}
             onChange={e => setEditName(e.target.value)}
+            placeholder="Task name"
             autoFocus
           />
-          <button onClick={saveEdit} className="btn btn-small">Save</button>
-          <button onClick={() => setIsEditing(false)} className="btn btn-small btn-outline">Cancel</button>
+          <textarea
+            value={editDescription}
+            onChange={e => setEditDescription(e.target.value)}
+            placeholder="Task description"
+            rows={3}
+          />
+          <button onClick={saveEdit} className="btn btn-small">Update</button>
+          <button onClick={onEditCancel} className="btn btn-small btn-outline">Cancel</button>
         </div>
       ) : (
         <>
-          <span className="task-name">{task.name}</span>
-          <span className="task-status">{task.status}</span>
+          <div className="task-content">
+            <h3 className="task-name">{task.name}</h3>
+            {task.description && (
+              <p className="task-description">
+                {task.description.length > 80 
+                  ? task.description.substring(0, 80) + '...' 
+                  : task.description}
+              </p>
+            )}
+            <span className={`task-status ${task.status}`}>{task.status}</span>
+          </div>
           <div className="task-actions">
             <button onClick={() => onToggle(task.id, task.status)} className="btn btn-small">
               {task.status === 'Complete' ? 'Mark Incomplete' : 'Mark Complete'}
             </button>
-            <button onClick={() => setIsEditing(true)} className="btn btn-small">Edit</button>
+            <button onClick={() => onEditStart(task.id)} className="btn btn-small">Edit</button>
             <button onClick={() => onDelete(task.id)} className="btn btn-small btn-danger">Delete</button>
+            <Link to={`/view/${task.id}`} className="btn btn-small btn-outline">View</Link>
           </div>
         </>
       )}
