@@ -43,12 +43,13 @@ const AddTaskPage: React.FC = () => {
     
 <div className="form-group">
   <label>Description</label>
-  <input
-    type="text"
+  <textarea
     value={description}
     onChange={e => setDescription(e.target.value)}
     placeholder="Briefly describe the task"
-    className="form-input description-input"
+    className="description-input"
+    rows={4}
+    style={{ resize: 'none' }} //resize handle
   />
 </div>
         <div className="form-group">

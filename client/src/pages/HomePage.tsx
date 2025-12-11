@@ -182,6 +182,7 @@ const TaskItem: React.FC<{
             placeholder="Task description"
             className="edit-description-input"
             rows={4}
+            style={{ resize: 'none' }} //prevemts resize button
           />
           <button onClick={saveEdit} className="btn btn-small">Update</button>
           <button onClick={onEditCancel} className="btn btn-small btn-outline">Cancel</button>
